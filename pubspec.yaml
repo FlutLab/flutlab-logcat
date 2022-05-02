@@ -1,0 +1,22 @@
+name: flutlab_logcat
+description: FlutLab Logcat
+version: 0.0.2
+homepage: https://flutlab.io
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        package: com.flutlab.logcat
+        pluginClass: FlutLabLogcatPlugin
