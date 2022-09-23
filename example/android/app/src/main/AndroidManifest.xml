@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.flutlab.logcat.example">
+    package="io.flutlab.logcat.example">
 
     <application
         android:name="${applicationName}"
@@ -32,11 +32,4 @@
             android:value="2" />
     </application>
 
-    <queries>
-        <package android:name="com.codegemz.flutlab.installer" />
-        <intent>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent>
-    </queries>
 </manifest>

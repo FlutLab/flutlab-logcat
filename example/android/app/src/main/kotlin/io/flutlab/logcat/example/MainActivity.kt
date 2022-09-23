@@ -1,4 +1,4 @@
-package com.flutlab.logcat.example
+package io.flutlab.logcat.example
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -7,7 +7,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 
 class FlutLabLogcat {
   static const MethodChannel _channel =
-      const MethodChannel('com.flutlab/logcat');
+      const MethodChannel('io.flutlab/logcat');
 
   static bool get isSupports {
     return Platform.isAndroid;

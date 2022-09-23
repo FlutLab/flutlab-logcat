@@ -1,4 +1,4 @@
-package com.flutlab.logcat
+package io.flutlab.logcat
 
 import android.util.Log
 import java.io.BufferedReader

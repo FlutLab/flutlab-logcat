@@ -1,6 +1,6 @@
 name: flutlab_logcat
 description: FlutLab Logcat
-version: 0.0.2
+version: 0.0.3
 homepage: https://flutlab.io
 
 environment:
@@ -18,5 +18,5 @@ flutter:
   plugin:
     platforms:
       android:
-        package: com.flutlab.logcat
+        package: io.flutlab.logcat
         pluginClass: FlutLabLogcatPlugin

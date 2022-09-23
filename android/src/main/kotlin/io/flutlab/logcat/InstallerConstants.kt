@@ -1,4 +1,4 @@
-package com.flutlab.logcat
+package io.flutlab.logcat
 
 object InstallerConstants {
     const val INCOMING_MESSAGE_LOG_LINE_KEY = 1

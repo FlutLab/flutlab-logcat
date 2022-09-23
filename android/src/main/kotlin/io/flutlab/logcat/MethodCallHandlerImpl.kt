@@ -1,4 +1,4 @@
-package com.flutlab.logcat
+package io.flutlab.logcat
 
 import android.content.ComponentName
 import android.content.Context
@@ -6,7 +6,7 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.*
 import android.util.Log
-import com.flutlab.logcat.util.ApplicationUtils
+import io.flutlab.logcat.util.ApplicationUtils
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import org.json.JSONArray
@@ -73,21 +73,23 @@ class MethodCallHandlerImpl(private val context: Context) : MethodChannel.Method
             return
         }
         connecting = true
-        if (!ApplicationUtils.isApplicationInstalled(context, APPLICATION_PACKAGE_NAME)) {
+        val mainApp = getMainApp()
+        if (mainApp == null) {
             result.error("installer_not_installed", "FlutLab Installer not installed on the device", null)
             connecting = false
             return
         }
-        val intent = Intent(LOG_SERVICE_ACTION)
+        val intent = Intent(mainApp.logServiceAction)
         val componentName = ComponentName(
-                APPLICATION_PACKAGE_NAME,
-                SERVICE_CLASS_NAME
+            mainApp.appPackageName,
+            mainApp.serviceClassName
         )
         intent.component = componentName
         intent.putExtra("packageName", context.packageName)
         val bindSuccess = try {
-            context.bindService(intent, serviceConnection,
-                    Context.BIND_AUTO_CREATE or Context.BIND_IMPORTANT
+            context.bindService(
+                intent, serviceConnection,
+                Context.BIND_AUTO_CREATE or Context.BIND_IMPORTANT
             )
         } catch (e: Throwable) {
             val message = "connect bindService error: " + e.message
@@ -104,6 +106,24 @@ class MethodCallHandlerImpl(private val context: Context) : MethodChannel.Method
             result.error("bind_result_false", "Bind returned failed", null)
         }
         connecting = false
+    }
+
+    private fun getMainApp(): MainAppData? {
+        if (ApplicationUtils.isApplicationInstalled(context, APPLICATION_PACKAGE_NAME)) {
+            return MainAppData(
+                APPLICATION_PACKAGE_NAME,
+                SERVICE_CLASS_NAME,
+                LOG_SERVICE_ACTION
+            )
+        }
+        if (ApplicationUtils.isApplicationInstalled(context, APPLICATION_PACKAGE_NAME_OLD)) {
+            return MainAppData(
+                APPLICATION_PACKAGE_NAME_OLD,
+                SERVICE_CLASS_NAME_OLD,
+                LOG_SERVICE_ACTION_OLD
+            )
+        }
+        return null
     }
 
     private fun throwNativeCrash() {
@@ -169,9 +189,12 @@ class MethodCallHandlerImpl(private val context: Context) : MethodChannel.Method
 
     companion object {
         private const val TAG = "MethodCallHandlerImpl"
-        private const val APPLICATION_PACKAGE_NAME = "com.codegemz.flutlab.installer"
-        private const val SERVICE_CLASS_NAME = "com.codegemz.flutlab.installer.log.LogService"
-        private const val LOG_SERVICE_ACTION = "com.codegemz.flutlab.installer.LOG_SERVICE"
+        private const val APPLICATION_PACKAGE_NAME = "io.flutlab.installer"
+        private const val APPLICATION_PACKAGE_NAME_OLD = "com.codegemz.flutlab.installer"
+        private const val SERVICE_CLASS_NAME = "io.flutlab.installer.log.LogService"
+        private const val SERVICE_CLASS_NAME_OLD = "com.codegemz.flutlab.installer.log.LogService"
+        private const val LOG_SERVICE_ACTION = "io.flutlab.installer.LOG_SERVICE"
+        private const val LOG_SERVICE_ACTION_OLD = "com.codegemz.flutlab.installer.LOG_SERVICE"
 
         fun wrapThrowableToJson(t: Throwable): JSONObject {
             val jsonObject = JSONObject()
@@ -189,11 +212,16 @@ class MethodCallHandlerImpl(private val context: Context) : MethodChannel.Method
                 stackTraceElementJSONObject.put(InstallerConstants.STACK_TRACE_ELEMENT_METHOD_NAME_KEY, it.methodName)
                 stackTraceElementJSONObject.put(InstallerConstants.STACK_TRACE_ELEMENT_FILE_NAME_KEY, it.fileName)
                 stackTraceElementJSONObject.put(InstallerConstants.STACK_TRACE_ELEMENT_LINE_NUMBER_KEY, it.lineNumber)
-                stackTraceElementJSONObject.put(InstallerConstants.STACK_TRACE_ELEMENT_IS_NATIVE_METHOD_KEY, it.isNativeMethod)
+                stackTraceElementJSONObject.put(
+                    InstallerConstants.STACK_TRACE_ELEMENT_IS_NATIVE_METHOD_KEY,
+                    it.isNativeMethod
+                )
                 jsonArray.put(stackTraceElementJSONObject)
             }
             jsonObject.put(InstallerConstants.THROWABLE_STACK_TRACE_KEY, jsonArray)
             return jsonObject
         }
     }
+
+    data class MainAppData(val appPackageName: String, val serviceClassName: String, val logServiceAction: String)
 }
