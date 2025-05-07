@@ -1,6 +1,6 @@
-# hello_example
+# flutlab_logcat_example
 
-Demonstrates how to use the hello plugin.
+Demonstrates how to use the Flutlab Logcat plugin.
 
 ## Getting Started
 

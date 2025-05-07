@@ -11,10 +11,10 @@ Future<void> main() async {
 }
 
 class MyApp extends StatefulWidget {
-  MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
-  _MyAppState createState() => _MyAppState();
+  State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
@@ -22,19 +22,19 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('FlutLab Logcat plugin example app'),
-        ),
+        appBar: AppBar(title: const Text('FlutLab Logcat plugin example app')),
         body: Center(
           child: Column(
             children: [
-              Text(FlutLabLogcat.isSupports
-                  ? 'The app is running successfully'
-                  : 'FlutLab Logcat running on non-supported platform'),
+              Text(
+                FlutLabLogcat.isSupports
+                    ? 'The app is running successfully'
+                    : 'FlutLab Logcat running on non-supported platform',
+              ),
               ElevatedButton(
                 onPressed: () => FlutLabLogcat.throwNativeCrash(),
                 child: Text("Throw native exception"),
-              )
+              ),
             ],
           ),
         ),
